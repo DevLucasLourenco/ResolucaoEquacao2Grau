@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Locale;
 
 interface CalcularDelta {
     double calcular(double a, double b, double c);
@@ -15,6 +16,7 @@ interface CalcularBhaskara {
 
 public class Equacao2Grau {
 
+    private Scanner scanner = new Scanner(System.in);
     private CalcularDelta delta = (a, b, c) -> Math.pow(b, 2) - (4 * a * c);;
     private CalcularBhaskara bhaskara = (a, b, valorDelta) -> {
         double[] res = new double[2];
@@ -25,24 +27,38 @@ public class Equacao2Grau {
     };
 
     public void main(String[] args) throws Exception {
-        List<Double> CoeficientesDesignados = encontrar_valores();
-        Map<String, Double> map_resultado = CALCULAR(CoeficientesDesignados);
+        boolean condicaoContinuidade;
 
-        System.out.println(map_resultado);
+        do {
+            List<Double> CoeficientesDesignados = encontrar_valores();
+            Map<String, Double> map_resultado = CALCULAR(CoeficientesDesignados);
+
+            System.out.println(map_resultado);
+
+            condicaoContinuidade = receber_condicao_continuidade();
+
+        } while (condicaoContinuidade);
+
     }
 
-    public static List<Double> encontrar_valores() {
+    public boolean receber_condicao_continuidade() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Deseja continuar? (S/N)");
+        String resultado = scanner.nextLine();
+
+        return !resultado.toUpperCase(Locale.ROOT).equals("N");
+    }
+
+    public List<Double> encontrar_valores() {
         List<Double> valoresCoeficientes = new ArrayList<>();
         String[] coeficientes = { "a", "b", "c" };
 
-        try (Scanner scanner = new Scanner(System.in)) {
-            for (int i = 0; i < coeficientes.length; i++) {
-                System.out.println(String.format("Valor do Coeficiente %s:", coeficientes[i]));
-                valoresCoeficientes.add(scanner.nextDouble());
-            }
-        } catch (NumberFormatException e) {
-            System.err.println("Erro na entreda do usuário. Utilize uam entrada válida.");
+        for (int i = 0; i < coeficientes.length; i++) {
+            System.out.println(String.format("Valor do Coeficiente %s:", coeficientes[i]));
+            valoresCoeficientes.add(this.scanner.nextDouble());
         }
+
         return valoresCoeficientes;
     }
 
